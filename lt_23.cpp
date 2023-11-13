@@ -35,7 +35,7 @@ public:
                 }
             }
             while(!minNode.empty()){
-                cur->next = minNode.front();
+                cur->next = minNode.front(); 
                 cur = cur->next;
                 minNode.pop();
                 int index = minIndex.front();
