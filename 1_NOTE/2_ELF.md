@@ -2,9 +2,13 @@
 - 查看文件头(是元信息,指明了段表的位置)
 `readelf -h <fn>`包含魔数&基本大小
 
-- 查看段表(由文件头e_shoff成员决定)
+- 查看Section段表(由文件头e_shoff成员决定)
 `readelf -S <fn>`更加详细的段表-->包含每段的标记
 `objdump -h <fn>`主要是段表-->**每个段的大小\索引\地址\偏移**
+
+- 查看Segment段表(被称作程序头表，只有ELF可执行文件才有)
+`readelf -l <fn>`查看装载与内存)
+
 
 - .text代码段
 `readelf -x .text <fn>`注意readelf不支持反汇编
