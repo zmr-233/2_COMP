@@ -36,7 +36,23 @@ inline llg getint()
     if (c=='-')  q=1, c=getchar(); while (c>='0' && c<='9') w=w*10+c-'0', c=getchar();
     return q ?  -w : w;
 }
-
+const int MAXN = 1000010;
+int dp[2][MAXN];
 int main(){
-    
+    string a,b;
+    while(cin>>a>>b){
+        memset(dp,0,sizeof(dp));
+        int cur=1,old=0;
+        for(int i=1;i<=a.size();i++){
+        for(int j=1;j<=b.size();j++){
+            if(a[i-1]==b[j-1])
+                dp[cur][j]=dp[old][j-1]+1;
+            else
+                dp[cur][j]=max(dp[old][j],dp[cur][j-1]); /*第二个写成old了，说明没有充分理解i和cur/old的关系*/
+        }
+        swap(cur,old);
+    }
+    cout << dp[old][b.size()];
+    }
+    return 0;
 }
