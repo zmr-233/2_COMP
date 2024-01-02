@@ -13,3 +13,4 @@ inline llg getint()
     if (c=='-')  q=1, c=getchar(); while (c>='0' && c<='9') w=w*10+c-'0', c=getchar();
     return q ? -w : w;
 }
+
