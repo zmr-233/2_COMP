@@ -49,6 +49,9 @@ int main() {
     return 0;
 }
 #endif
+/**
+ * 使用线段树
+*/
 #include<bits/stdc++.h>
 using namespace std;
 

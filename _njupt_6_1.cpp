@@ -1,3 +1,4 @@
+//DP状态压缩_
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -10,7 +11,8 @@ inline llg getint()
 {
     llg w=0,q=0; char c=getchar();
     while((c<'0' || c>'9') && c!='-') c=getchar();
-    if (c=='-')  q=1, c=getchar(); while (c>='0' && c<='9') w=w*10+c-'0', c=getchar();
+    if (c=='-')  q=1, c=getchar(); 
+    while (c>='0' && c<='9') w=w*10+c-'0', c=getchar();
     return q ? -w : w;
 }
 

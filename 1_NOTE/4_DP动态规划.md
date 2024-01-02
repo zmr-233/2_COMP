@@ -94,3 +94,91 @@ dp[i]=dp[i-1]+dp[i-2]+dp[i-3] //i>2
 ------------------------------------------------------------
 
 ## B|数位统计DP
+虽然不难，但是最大的特点是容易错：
+1. 易错：统计区间[a,b]是[1,a-1]与[1,b]的差分，不要一下子写成solve(a,cnta)
+2. 有两种方式得到dp[i]--即**为i位数的每种数字有多少个**：
+   ```cpp
+   dp[i]=dp[i-1]*10+10^(i-1)/*使用递推方式得到
+   在十位个位一共dp[i-1]，外加百位的出现10^(i-1)个 */
+   dp[i]=i*10^(i)/10 /*使用排列组合思想得到
+   "数位"是指00-99,一共100个数字，但是每个数贡献2个数位，即为2*100=200*/
+   ```
+3. 易错:这里是一视同仁把前导0也视为数字，最后需要去除
+
+- `p2602 A-数位统计DP  递推实现`:以[0,324]为例，说明每种数字的cnt:
+  ```cpp
+    const int N = 18;
+    llg ten[N],dp[N];
+    llg cnta[N],cntb[N];
+    llg num[N];
+    void init(){
+        ten[0]=1;
+        for(int i=1;i<N;i++){
+            dp[i]=i*ten[i-1];
+            ten[i]=10*ten[i-1];
+        }
+    }
+    void solve(llg x,llg* cnt){
+        int len=0;
+        while(x){
+            num[++len]=x%10;
+            x/=10;
+        }
+        for(int i=len;i>=1;i--){
+            //A-常规：小一位
+            for(int j=0;j<=9;j++) cnt[j] += dp[i-1]*num[i];
+            //B-最高位：小于num[i]
+            for(int j=0/*包含0*/;j<num[i];j++) cnt[j] += ten[i-1];
+            //C-最高位：刚好是num[i]
+            llg tmp=0;
+            for(int j=i-1;j>=1;j--) tmp = 10*tmp + num[j];
+            cnt[num[i]] += tmp +1 ;
+            /*ERROR:
+            cnt[num[i]] += tmp; 这里缺少了300这种情况
+            应当+1l
+            */
+            //最后处理--去除前缀0
+            cnt[0]-=ten[i-1]; //这里已经相当于1*ten[i-1]
+        }
+    }
+  ```
+
+- `p2602 B-数位统计DP  记忆化搜索实现`:使用记忆化搜索比较难，建议看书，模板代码如下：
+  ```cpp
+    const int N=15;
+    llg dp[N][N];
+    int num[N],now; //now:统计的是当前0-9的哪一个数字
+
+    llg dfs(int pos,int sum,bool lead,bool limit){ //pos:当前处理到第pos位
+        if(pos==0) return sum; //递归到0位，结束
+        if(!lead && !limit && dp[pos][sum]!=-1) return dp[pos][sum]; //记忆化搜索
+        
+        int up = (limit?num[pos]:9); //这一位的最大值，如324第3位就是Up=3
+        llg ans=0; //下面以324 now=2(pos=3)为例
+        for(int i=0;i<=up;i++){
+            //A-计算000-099
+            if(i==0 && lead) ans += dfs(pos-1,sum,true,limit && i==up);
+            //B-计算200-299
+            else if(i==now) ans += dfs(pos-1,sum+1,false,limit && i==up);
+            //C-计算100-199
+            else if(i!=now) ans += dfs(pos-1,sum,false,limit && i==up);
+        }
+        if(!lead && !limit) dp[pos][sum]=ans; //注意：有且只有无前导且无数位限制，才能放入dp
+        return ans;
+    }
+    llg solve(llg x){
+        int len=0;
+        while(x){
+            num[++len]=x%10;
+            x/=10;
+        }
+        memset(dp,-1,sizeof(dp));
+        return dfs(len,0,true,true);
+    }
+  ```
+
+#### 数位统计例题
+- `p2657 Windy数abs(a-b)>=2`:定义状态dp[pos][last]表示数字长度在pos，前一位在last的情况下，数字的个数(注意初始化的last=-2)
+
+#### 数位统计经验怪谈
+1. 至少可以看出为了能够递归，是从外部到内部的，通常一个函数的返回值就是答案

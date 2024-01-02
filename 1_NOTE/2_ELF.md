@@ -7,7 +7,7 @@
 `objdump -h <fn>`主要是段表-->**每个段的大小\索引\地址\偏移**
 
 - 查看Segment段表(被称作程序头表，只有ELF可执行文件才有)
-`readelf -l <fn>`查看装载与内存)
+`readelf -l <fn>`查看装载与内存
 
 
 - .text代码段
@@ -24,9 +24,9 @@
 
 - .strtab字符串表
 
-- .rel.text重定位表
+#### 重定位
 `ld <fn>`会简单显示未定义的符号信息
-`objdumo -r <fn>`重定位表**推荐使用**
+`objdump -r <fn>`重定位表**推荐使用**
 
 - .symtab符号表
 `readelf -s <fn>`符号表**推荐:更加详细**->地址\大小等等
@@ -36,5 +36,28 @@
 **可以单独使用nm获取符号信息**
 `nm <fn>`显示所有符号表信息(较为简洁)-->注意nm是带有元数据
 
+#### |查看Section&Segment
+`readelf -S <fn>`查看Section信息
+`readelf -l <fn>`查看Segment信息
+
+#### |查看模块间数据访问
+1. 使用`objdump -h`找到`.got`段
+2. `objdump -R <fn.so>`找到**动态链接**的重定位项(必需是共享文件)
+
 #### 推荐命令
 `objdump -x -d -t <fn>`显示大部分信息
+
+
+#### 动态链接相关结构
+- .interp段:
+`objdump -s <fn>`或者`readelf -l <fn> | grep interpreter`
+
+- .dynamic段
+`readelf -d <fn.so>`这个算动态链接的"文件头"
+`ldd <fn>`用于查看依赖的共享库
+
+- .dynsym动态符号表
+`readelf -sD <fn.so>`只保存与动态链接相关的符号(相当于.symtab)
+
+- .rel.dyn & .rel.plt 动态链接重定位表
+`readelf -r <fn.so>`能够读出动态/静态的重定位表
