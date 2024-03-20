@@ -1,3 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+ll ha1[2000005], ha2[2000005], p[2000005];
+const ll mod = 1e9 + 7;
+const ll P = 1331;
+
+ll mo(ll x) {
+    return (x % mod + mod) % mod;
+}
+
+void ha(string s) {
+    int n = s.size();
+    for (int i = 1; i <= n; i++) {
+        ha1[i] = mo(ha1[i - 1] * P + s[i - 1]);
+    }
+
+    for (int i = n; i >= 1; i--) {
+        ha2[i] = mo(ha2[i + 1] * P + s[i - 1]);
+    }
+}
+
+ll get1(int l, int r) {
+    if (l > r) return 0;
+    return mo(ha1[r] - ha1[l - 1] * p[r - 1 + 1]);
+}
+
+ll get2(int l, int r) {
+    if (l > r) return 0;
+    return mo(ha2[1] - ha2[r + 1] * p[r - 1 + 1]);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    ha(s);
+    p[0] = 1;
+    for (int i = 1; i <= n * 2; i++) {
+        p[i] = mo(p[i - 1] * P);
+    }
+
+
+    for (int i = 0; i <= n; i++) {
+        if (get1(1, i) == get2(1 + n, i + n) && get2(i + 1, n) == get1(i + n + 1, n * 2)) {
+            string a = s.substr(0, i) + s.substr(n + i);
+            string b = s.substr(i, n);
+            reverse(b.begin(), b.end());
+            if (a == b) {
+                cout << a << endl;
+                cout << i << endl;
+                return 0;
+            }
+        }
+    }
+
+    cout << -1 << endl;
+}
 //#include<bits/stdc++.h>
 #include<iostream>
 #include<string.h>
